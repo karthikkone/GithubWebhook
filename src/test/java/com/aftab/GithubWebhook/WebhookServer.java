@@ -12,4 +12,10 @@ public class WebhookServer {
 	public void getPayload(@RequestBody String body) {
 		System.out.println(body);
 	}
+	
+	@RequestMapping(value="/", method = RequestMethod.GET)
+	public String home() {
+		return "Github Wrapper Demo!";
+	}
+	
 }
