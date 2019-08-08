@@ -27,6 +27,10 @@ public class PullRequest {
 
 	class Links {
 		Commits commits;
+		
+		public Links() {
+			super();
+		}
 
 		public Commits getCommits() {
 			return commits;
