@@ -17,12 +17,37 @@ public class PullRequest {
 	private boolean draft;
 	private String id;
 	
+	
+	
+	public PullRequest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
 	class Links {
 		Commits commits;
+
+		public Commits getCommits() {
+			return commits;
+		}
+
+		public void setCommits(Commits commits) {
+			this.commits = commits;
+		}
 	}
 	
 	class Commits {
 		String href;
+
+		public String getHref() {
+			return href;
+		}
+
+		public void setHref(String href) {
+			this.href = href;
+		}
+		
 	}
 
 	public String getNumber() {
