@@ -1,4 +1,4 @@
-package com.aftab.GithubWebhook;
+package com.bpe.GithubWebhook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
