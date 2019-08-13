@@ -14,6 +14,15 @@ public class PullRequest {
 	private String title;
 	private String body;
 	private Links _links;
+	public Links get_links() {
+		return _links;
+	}
+
+	public void set_links(Links _links) {
+		this._links = _links;
+	}
+
+
 	private boolean draft;
 	private String id;
 	
