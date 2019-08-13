@@ -52,7 +52,10 @@ public class PullRequest {
 	
 	class Commits {
 		String href;
-
+		
+		public Commits() {
+			super();
+		}
 		public String getHref() {
 			return href;
 		}
