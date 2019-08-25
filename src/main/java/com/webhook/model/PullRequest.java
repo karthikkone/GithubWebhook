@@ -24,7 +24,7 @@ public class PullRequest {
 
 	@Data
     @ToString(includeFieldNames = true)
-	static class Links {
+	public static class Links {
 		Commits commits;
 		
 		public Links() {
@@ -34,7 +34,7 @@ public class PullRequest {
 
 	@Data
     @ToString(includeFieldNames = true)
-	static class Commits {
+	public static class Commits {
 		String href;
 		
 		public Commits() {
@@ -43,5 +43,14 @@ public class PullRequest {
 		
 	}
 
+	public boolean hasCommits() {
+		if (this._links.commits != null) {
+			return true;
+		}
+		return false;
+	}
 
+	public String commitsOfPullRequest() {
+		return this.get_links().getCommits().getHref();
+	}
 }
