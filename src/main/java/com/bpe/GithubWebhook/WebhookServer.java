@@ -1,6 +1,7 @@
 package com.bpe.GithubWebhook;
 
 import com.bpe.GithubWebhook.service.GitLookUpService;
+import com.bpe.GithubWebhook.service.ScanService;
 import com.webhook.model.PullCommit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,8 @@ public class WebhookServer {
 
     @Autowired
     private GitLookUpService gitLookUpService;
+    @Autowired
+    private ScanService scanService;
 	
 	@RequestMapping(value="/payload", method = RequestMethod.POST)
 	public void getPayload(@RequestBody PullRequestPayload body) {
@@ -32,6 +35,7 @@ public class WebhookServer {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }*/
+		scanService.initiate(body.getPull_request());
     }
 	
 	@RequestMapping(value="/", method = RequestMethod.GET)

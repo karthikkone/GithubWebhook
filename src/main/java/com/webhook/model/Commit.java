@@ -2,10 +2,12 @@ package com.webhook.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
 @Data
+@ToString(includeFieldNames=true)
 public class Commit {
     private String sha;
     @JsonProperty("commit")
@@ -38,6 +40,7 @@ public class Commit {
     }
 
     @Data
+    @ToString(includeFieldNames = true)
     public static class CommitFile {
         private String sha;
         private String filename;
