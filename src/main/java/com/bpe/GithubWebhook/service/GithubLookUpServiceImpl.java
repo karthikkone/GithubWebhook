@@ -1,5 +1,6 @@
 package com.bpe.GithubWebhook.service;
 
+import com.webhook.model.Commit;
 import com.webhook.model.PullCommit;
 import com.webhook.model.PullRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 
     @Async
     @Override
-    public CompletableFuture<List<PullCommit>> getCommits(PullRequest pullRequest) {
+    public CompletableFuture<List<PullCommit>> getPullCommits(PullRequest pullRequest) {
 
 
         if (pullRequest != null && pullRequest.hasCommits()) {
@@ -36,6 +37,7 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 
                 if (response.getStatusCodeValue() == 200) {
                     List<PullCommit> clist = response.getBody();
+                    clist = (clist != null ? clist : Collections.emptyList());
                     return CompletableFuture.completedFuture(clist);
                 }
             }
@@ -45,4 +47,25 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
+    
+    @Async
+	@Override
+	public CompletableFuture<List<Commit>> getCommit(PullCommit pullCommit) {
+		if (pullCommit != null && pullCommit.getUrl() != null) {
+			String readCommitsApi = pullCommit.getUrl();
+			ResponseEntity<List<Commit>> response = restTemplate.exchange(readCommitsApi,
+					HttpMethod.GET,
+					null,
+					new ParameterizedTypeReference<List<Commit>>() {});
+			
+			if (response.getStatusCodeValue() == 200) {
+				List<Commit> commits = response.getBody();
+				 commits = (commits != null ? commits : Collections.emptyList());
+				 return CompletableFuture.completedFuture(commits);
+			}
+		}
+		
+		
+		return CompletableFuture.completedFuture(Collections.emptyList());
+	}
 }
