@@ -1,6 +1,8 @@
 package com.webhook.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Data
 @ToString(includeFieldNames=true)
+@Builder
 public class Commit {
     private String sha;
     @JsonProperty("commit")
@@ -17,6 +20,7 @@ public class Commit {
     private List<CommitParent> parents;
 
     @Data
+    @Builder
     public static class CommitInfo {
         private User author;
         private User commiter;
@@ -26,6 +30,7 @@ public class Commit {
     }
 
     @Data
+    @Builder
     public static class User {
         private String name;
         private String email;
@@ -33,6 +38,7 @@ public class Commit {
     }
 
     @Data
+    @Builder
     public static class Verification {
         private boolean verified;
         private String reason;
@@ -41,6 +47,7 @@ public class Commit {
 
     @Data
     @ToString(includeFieldNames = true)
+    @Builder
     public static class CommitFile {
         private String sha;
         private String filename;
