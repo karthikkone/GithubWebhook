@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class GithubLookUpServiceImpl implements GitLookUpService {
-
+	@Autowired
     private RestTemplate restTemplate;
 
     @Async
