@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -25,21 +29,26 @@ public class ScanServiceImpl implements ScanService {
 	@Value("${pmd.path}")
 	private String pmdPath;
 	
-	@Value("{$workspace.path:/tmp}")
+	@Value("${workspace.path}")
 	private String workspace;
 	
-	@Value("{$pmd.rulespath}")
+	@Value("${pmd.rulespath}")
 	private String rulesPath;
 	
-	@Value("{$pmd.output:text}")
+	@Value("${pmd.output:text}")
 	private String pmdOutputFormat;
 	
 	@Autowired
 	private GitLookUpService gitLookupService;
 	
+	@Autowired
+	private PmdExecutorService pmd;
+	
 	@Override
 	@Async
 	public void initiate(PullRequest pr) {
+		System.out.println("INFO: pmd PATH = "+pmdPath);
+		System.out.println("INFO: Initiating scan on workspace : "+workspace);
 		//process open pull requests
 		List<Commit> commitsOfPR = new ArrayList<Commit>();
 		if (pr != null && pr.getState().equals("open")) {
@@ -62,21 +71,29 @@ public class ScanServiceImpl implements ScanService {
 				System.out.println("Commits of Pull request: "+commitsOfPR);
 				if (!commitsOfPR.isEmpty()) {
 					//create a directory for current PullRequest
-					new File(""+workspace+"/"+pr.getNumber());
+					Path path = Paths.get(workspace, pr.getNumber());
+					if (Files.notExists(path)) {
+						Files.createDirectories(path);
+					}
 					
 					for (Commit c : commitsOfPR) {
 						List<Commit.CommitFile> commitedFiles = c.getFiles();
 						//create a directory for commit
-						File filesOfCommit = new File(""+workspace+"/"+pr.getNumber()+"/"+c.getSha());
+						Path commitPath = Paths.get(workspace, pr.getNumber(),c.getSha());
+						if (Files.notExists(commitPath)) {
+							Files.createDirectories(commitPath);
+						}
+						
 						
 						//fetch and save changed files to commits directory
 						for (Commit.CommitFile f: commitedFiles) {
-							FileUtils.copyURLToFile(new URL(f.getRaw_url()), filesOfCommit);
+							File dest = commitPath.resolve(f.getFilename()).toFile();
+							FileUtils.copyURLToFile(new URL(f.getRaw_url()), dest);
 						}
 					}
 					
 					//execute pmd
-					
+					pmd.executeOnDir(new File(workspace));
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -89,6 +106,8 @@ public class ScanServiceImpl implements ScanService {
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
