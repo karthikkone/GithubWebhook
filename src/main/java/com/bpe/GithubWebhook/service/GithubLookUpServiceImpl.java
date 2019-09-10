@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -67,9 +68,10 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 			
 			System.out.println("COMMITS : "+response.getBody());
 			Gson gson = new Gson();
-			Commit[] commitArr = gson.fromJson(response.getBody(), Commit[].class);
+			Commit commitArr = gson.fromJson(response.getBody(), Commit.class);
 			if (response.getStatusCodeValue() == 200) {
-				List<Commit> commits = Arrays.asList(commitArr);
+				List<Commit> commits = new ArrayList<Commit>();
+				commits.add(commitArr);
 				
 				 commits = (commits != null ? commits : Collections.emptyList());
 				 return CompletableFuture.completedFuture(commits);
