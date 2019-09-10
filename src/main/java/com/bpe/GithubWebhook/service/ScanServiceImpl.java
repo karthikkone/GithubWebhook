@@ -93,7 +93,14 @@ public class ScanServiceImpl implements ScanService {
 					}
 					
 					//execute pmd
-					pmd.executeOnDir(new File(workspace));
+					String scanResults = pmd.executeOnDir(new File(workspace));
+					
+					//post results as pull request comment
+					if (scanResults != null && !scanResults.isEmpty()) {
+						gitLookupService.postComment(pr, scanResults);
+					} else {
+						gitLookupService.postComment(pr, "No issues detected");
+					}
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
