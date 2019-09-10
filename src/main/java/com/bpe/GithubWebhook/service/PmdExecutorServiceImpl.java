@@ -54,20 +54,22 @@ public class PmdExecutorServiceImpl implements PmdExecutorService {
 			}
 			
 			try {
-				int exitCode = process.waitFor();
+				Integer exitCode = process.waitFor();
 				
 				System.out.println("pmd results : ");
 				System.out.println(strBuilder.toString());
-				if (exitCode == 0) {
+				if (exitCode != null) {
 					output = strBuilder.toString();
+					return output;
 				} else {
 					System.out.println("pmd scan failed with exit code "+exitCode);
+					return null;
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return output;
+			
 		}
 		return null;
 	}
