@@ -1,7 +1,6 @@
 package com.bpe.GithubWebhook.service;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.webhook.model.Commit;
 import com.webhook.model.PullCommit;
 import com.webhook.model.PullRequest;
