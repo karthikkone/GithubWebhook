@@ -1,6 +1,7 @@
 package com.bpe.GithubWebhook.service;
 
 import com.google.gson.Gson;
+import com.webhook.model.CommentContent;
 import com.webhook.model.Commit;
 import com.webhook.model.PullCommit;
 import com.webhook.model.PullRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -91,8 +93,10 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 			if(commentsApi != null && !commentsApi.isEmpty()) {
 				HttpHeaders headers = new HttpHeaders();
 				headers.set("Authorization", "token "+githubAuthToken);
-				String body = "{"+"\""+"body"+"\""+":"+"\""+comment+"\"";
-				HttpEntity<String> entity = new HttpEntity<>(body,headers);
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				CommentContent comBody = new CommentContent();
+				comBody.setBody(comment);
+				HttpEntity<CommentContent> entity = new HttpEntity<>(comBody,headers);
 				ResponseEntity<String> response = restTemplate.exchange(commentsApi,HttpMethod.POST, entity,String.class);
 				
 				if (response.getStatusCode() == HttpStatus.OK) {
