@@ -1,5 +1,7 @@
 package com.bpe.GithubWebhook.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.webhook.model.Commit;
 import com.webhook.model.PullCommit;
 import com.webhook.model.PullRequest;
@@ -15,7 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -59,13 +61,17 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 	public CompletableFuture<List<Commit>> getCommit(PullCommit pullCommit) {
 		if (pullCommit != null && pullCommit.getUrl() != null) {
 			String readCommitsApi = pullCommit.getUrl();
-			ResponseEntity<List<Commit>> response = restTemplate.exchange(readCommitsApi,
+			ResponseEntity<String> response = restTemplate.exchange(readCommitsApi,
 					HttpMethod.GET,
 					null,
-					new ParameterizedTypeReference<List<Commit>>() {});
+					String.class);
 			
+			System.out.println("COMMITS : "+response.getBody());
+			Gson gson = new Gson();
+			Commit[] commitArr = gson.fromJson(response.getBody(), Commit[].class);
 			if (response.getStatusCodeValue() == 200) {
-				List<Commit> commits = response.getBody();
+				List<Commit> commits = Arrays.asList(commitArr);
+				
 				 commits = (commits != null ? commits : Collections.emptyList());
 				 return CompletableFuture.completedFuture(commits);
 			}
