@@ -4,8 +4,12 @@ import com.webhook.model.Commit;
 import com.webhook.model.PullCommit;
 import com.webhook.model.PullRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,7 +24,9 @@ import java.util.concurrent.CompletableFuture;
 public class GithubLookUpServiceImpl implements GitLookUpService {
 	@Autowired
     private RestTemplate restTemplate;
-
+	
+	@Value("${github.auth.token}")
+	private String githubAuthToken;
     @Async
     @Override
     public CompletableFuture<List<PullCommit>> getPullCommits(PullRequest pullRequest) {
@@ -67,5 +73,30 @@ public class GithubLookUpServiceImpl implements GitLookUpService {
 		
 		
 		return CompletableFuture.completedFuture(Collections.emptyList());
+	}
+
+	@Override
+	public boolean postComment(PullRequest pr, String comment) {
+		
+		if (pr != null && pr.get_links() != null && pr.get_links().getComments() != null) {
+			String commentsApi = pr.get_links().getComments().getHref();
+			
+			if(commentsApi != null && !commentsApi.isEmpty()) {
+				HttpHeaders headers = new HttpHeaders();
+				headers.set("Authorization", "token "+githubAuthToken);
+				String body = "{"+"\""+"body"+"\""+":"+"\""+comment+"\"";
+				HttpEntity<String> entity = new HttpEntity<>(body,headers);
+				ResponseEntity<String> response = restTemplate.exchange(commentsApi,HttpMethod.POST, entity,String.class);
+				
+				if (response.getStatusCode() == HttpStatus.OK) {
+					System.out.println("[OK] posted comment on PullRequest : "+pr);
+					return true;
+				} else {
+					System.out.println("[FAILED] to post comment on PullRequest : "+pr);
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 }

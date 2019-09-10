@@ -11,4 +11,5 @@ import java.util.concurrent.CompletableFuture;
 public interface GitLookUpService {
     public CompletableFuture<List<PullCommit>> getPullCommits(PullRequest pullRequest);
     public CompletableFuture<List<Commit>> getCommit(PullCommit pullCommit);
+    public boolean postComment(PullRequest pr, String comment);
 }
