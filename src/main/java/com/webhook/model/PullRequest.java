@@ -26,12 +26,21 @@ public class PullRequest {
     @ToString(includeFieldNames = true)
 	public static class Links {
 		Commits commits;
-		
+		Comments comments;
 		public Links() {
 			super();
 		}
 	}
-
+	
+	@Data
+	@ToString(includeFieldNames = true)
+	public static class Comments {
+		String href;
+		public Comments() {
+			super();
+		}
+	}
+	
 	@Data
     @ToString(includeFieldNames = true)
 	public static class Commits {
